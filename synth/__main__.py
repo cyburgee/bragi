@@ -16,10 +16,9 @@ VOICES = {}
 
 # generator for sine wave voices
 class SinOsc:
-    def __init__(self, frequency, amplitude=0.5, phase=0.0):
+    def __init__(self, frequency, amplitude=0.5):
         self.frequency = frequency
         self.amplitude = amplitude
-        self.phase = phase
         self.start = 0.0
         self.end = CHUNK_DURATION
 
@@ -27,9 +26,8 @@ class SinOsc:
         return self
 
     def __next__(self):
-        time_stamps = np.linspace(self.start, self.end, BUFFER_SIZE, endpoint=False)
-        samples = self.amplitude * np.sin(self.phase + (2 * np.pi * self.frequency) * time_stamps)
-
+        time_stamps = np.linspace(self.start, self.end, BUFFER_SIZE)
+        samples = self.amplitude * np.sin(time_stamps * (2 * np.pi * self.frequency))
         # update the sample start and end for the next playback buffer
         self.start = self.end
         self.end += CHUNK_DURATION
@@ -38,7 +36,7 @@ class SinOsc:
 
 def stream_callback(in_data, frame_count, time_info, status_flags):
     # mix all the voices into a single waveform
-    # make sure to get a list of all voices so that it doesnt freak out if one is added or dropped during iteration
+    # make sure to get a list of all voices so that it doesn't freak out if one is added or dropped during iteration
     input_signals = [next(voice) for voice in list(VOICES.values())]
     if not input_signals: # output silence if no inputs
         return np.zeros(BUFFER_SIZE).astype(np.float32), pyaudio.paContinue
@@ -52,7 +50,7 @@ def key_pressed(key):
         freq = KEY_MAP.get(key.char)
         if freq:
             if not VOICES.get(key.char):
-                print(f'generating {freq}')
+                # print(f'generating {freq}')
                 VOICES[key.char] = SinOsc(freq)
 
 def key_released(key):
@@ -64,7 +62,7 @@ def key_released(key):
     if hasattr(key, 'char'):
         voice = VOICES.get(key.char)
         if voice:
-            print(f'stopping {voice.frequency}')
+            # print(f'stopping {voice.frequency}')
             del VOICES[key.char]
 
 if __name__ == "__main__":

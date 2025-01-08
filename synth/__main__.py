@@ -2,6 +2,9 @@ import numpy as np
 import pyaudio
 from pynput import keyboard
 
+type Hz = int
+type Seconds = float
+
 SAMPLE_RATE = 44100
 BUFFER_SIZE = 1024
 CHUNK_DURATION = BUFFER_SIZE / SAMPLE_RATE
@@ -16,7 +19,7 @@ VOICES = {}
 
 # generator for sine wave voices
 class SinOsc:
-    def __init__(self, frequency, amplitude=0.5):
+    def __init__(self, frequency: Hz, amplitude=0.5):
         self.frequency = frequency
         self.amplitude = amplitude
         self.start = 0.0

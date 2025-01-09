@@ -1,5 +1,5 @@
 import pytest
-from synth.music import Pitch, PitchClass
+from music import Pitch, PitchClass
 
 def test_pitch_str():
     pitch = Pitch(PitchClass.C, 4)
@@ -35,3 +35,14 @@ def test_pitch_frequency():
     c4 = Pitch(PitchClass.C, 4)
     assert pytest.approx(a4.frequency(), 0.01) == 440.0
     assert pytest.approx(c4.frequency(), 0.01) == 261.63
+
+def test_pitch_addition():
+    c4 = Pitch(PitchClass.C, 4)
+    d4 = c4 + 2
+    b3 = c4 - 1
+    assert d4 == Pitch(PitchClass.D, 4)
+    assert b3 == Pitch(PitchClass.B, 3)
+
+def test_pitch_index():
+    c4 = Pitch(PitchClass.C, 4)
+    assert c4.index() == 60

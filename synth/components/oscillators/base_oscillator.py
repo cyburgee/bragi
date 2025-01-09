@@ -1,14 +1,12 @@
 from abc import ABC, abstractmethod
+from util.types import Hz, Degrees, Amplitude
 
 
 class Oscillator(ABC):
-    def __init__(
-        self, freq=440, phase=0, amp=1, sample_rate=44_100, wave_range=(-1, 1)
-    ):
+    def __init__(self, freq: Hz = 440, phase: Degrees = 0, amp:Amplitude=1, wave_range=(-1, 1)):
         self._freq = freq
         self._amp = amp
         self._phase = phase
-        self._sample_rate = sample_rate
         self._wave_range = wave_range
 
         # Properties that will be changed

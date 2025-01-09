@@ -6,6 +6,9 @@ component.
 """
 
 from collections.abc import Iterable
+from abc import ABC, abstractmethod
+
+from util.types import Sample
 
 
 class Panner:
@@ -51,7 +54,19 @@ class ModulatedPanner(Panner):
         return self.r
 
 
-class Volume:
+class Filter(ABC):
+    """
+    Base class for a basic filter.
+    """
+    @abstractmethod
+    def __call__(self, val: Sample) -> Sample:
+        """
+        val : input value that needs to be filtered.
+        """
+        pass
+
+
+class Volume(Filter):
     """
     Scales the input values by `amp`, can be used
     to increase or decrease the amplitude.
@@ -64,7 +79,7 @@ class Volume:
         """
         self.amp = amp
 
-    def __call__(self, val):
+    def __call__(self, val: Sample) -> Sample:
         _val = None
         if isinstance(val, Iterable):
             _val = tuple(v * self.amp for v in val)
@@ -109,7 +124,7 @@ class ModulatedVolume(Volume):
         return ended
 
 
-class Clipper:
+class Clipper(Filter):
     """
     Component that clips the input signal to
     the given wave range.
@@ -123,7 +138,7 @@ class Clipper:
         mi, ma = wave_range
         self.mm = lambda v: max(mi, min(ma, v))
 
-    def __call__(self, val):
+    def __call__(self, val: Sample) -> Sample:
         if isinstance(val, Iterable):
             _val = tuple(self.mm(v / 2) * 2 for v in val)
         else:

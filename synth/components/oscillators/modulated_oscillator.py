@@ -1,3 +1,6 @@
+from synth.components.oscillators.base_oscillator import Oscillator
+
+
 class ModulatedOscillator:
     """
     Creates a modulated oscillator by using a plain oscillator along with modulators,
@@ -12,9 +15,7 @@ class ModulatedOscillator:
     to generate the sequence of values.
     """
 
-    def __init__(
-        self, oscillator, *modulators, amp_mod=None, freq_mod=None, phase_mod=None
-    ):
+    def __init__(self, oscillator: Oscillator, *modulators, amp_mod=None, freq_mod=None, phase_mod=None):
         """
         oscillator : Instance of `Oscillator`, a component that generates a
             periodic signal of a given frequency.
@@ -22,20 +23,20 @@ class ModulatedOscillator:
         modulators : Components that generate a signal that can be used to
             modify the internal parameters of the oscillator.
             The number of modulators should be between 1 and 3.
-            If only 1 is passed then then the same modulator is used for
+            If only 1 is passed then the same modulator is used for
             all the parameters.
 
         amp_mod : Any function that takes in the initial oscillator amplitude
             value and the modulator value and returns the modified value.
-            If set the first modualtor is used for the values.
+            If set the first modulator is used for the values.
 
         freq_mod : Any function that takes in the initial oscillator frequency
             value and the modulator value and returns the modified value.
-            If set the second modualtor of the last modulator is used for the values.
+            If set the second modulator of the last modulator is used for the values.
 
         phase_mod : Any function that takes in the initial oscillator phase
             value and the modulator value and returns the modified value.
-            If set the third modualtor of the last modulator is used for the values.
+            If set the third modulator of the last modulator is used for the values.
         """
         self.oscillator = oscillator
         self.modulators = modulators
@@ -75,6 +76,7 @@ class ModulatedOscillator:
         for modulator in self.modulators:
             if hasattr(modulator, tr):
                 modulator.trigger_release()
+        # TODO: remove this?
         if hasattr(self.oscillator, tr):
             self.oscillator.trigger_release()
 
@@ -85,6 +87,7 @@ class ModulatedOscillator:
         for modulator in self.modulators:
             if hasattr(modulator, e):
                 ended.append(modulator.ended)
+        # TODO: remove this?
         if hasattr(self.oscillator, e):
             ended.append(self.oscillator.ended)
         return all(ended)

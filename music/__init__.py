@@ -1,6 +1,8 @@
 from enum import Enum
 from functools import total_ordering
 
+from util.types import Hz
+
 type Semitone = int
 type Octave = int
 
@@ -45,14 +47,24 @@ class Pitch:
     def __lt__(self, other):
         return self.frequency() < other.frequency()
 
+    def __add__(self, semis: Semitone):
+        return self._from_index(self.index() + semis)
+
+    def __sub__(self, semis: Semitone):
+        return self._from_index(self.index() - semis)
+
     # MIDI index
     def index(self):
         return (self.octave + 1) * PITCH_COUNT + self.pitch_class.value
 
-    def distance(self, other):
+    @staticmethod
+    def _from_index(index: int):
+        return Pitch(PitchClass(index % PITCH_COUNT), index // PITCH_COUNT - 1)
+
+    def distance(self, other) -> Semitone:
         return other.index() - self.index()
 
     # base frequency on A4 = 440Hz
     # source https://en.wikipedia.org/wiki/Piano_key_frequencies
-    def frequency(self):
+    def frequency(self) -> Hz:
         return 440 * (2 ** ((Pitch(PitchClass.A, 4).distance(self)) / 12))

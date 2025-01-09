@@ -28,7 +28,6 @@ class Chain:
         self.modifiers = modifiers
 
     def __getattr__(self, attr):
-        val = None
         if hasattr(self.generator, attr):
             val = getattr(self.generator, attr)
         else:
